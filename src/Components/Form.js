@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../CSS/quiz.css";
 import DisplayScore from "./DisplayScore";
+import {useNavigate, Route, Routes} from "react-router-dom";
+import Heading from "./Heading";
 
 const Form = () => {
 
+    const navigate = useNavigate();
     const [questions, setQuestions] = useState([]);
     const [storeUserAnswer, setUserAnswer] = useState("");
     const [storeQuestion, setQuestion] = useState({
@@ -12,7 +15,8 @@ const Form = () => {
     });
     //const [storeAnswer, setAnswer] = useState("");
     const [score,setScore] = useState(0);
-    const [selected,setSelected] = useState(true);
+    const [selected,setSelected] = useState(false);
+    
 
     useEffect(() => {
         axios.get(`http://localhost:2300/AAQuiz/api/v1/getQuestions`)
@@ -42,16 +46,21 @@ const Form = () => {
         }
     }
 
-    const displayScore = () => {
-        //alert(`your score is ${score}`)
-        console.log("displayScore");
-        // return (
-        <p style={{"color":"white"}}>Hello</p>
-        // )
-        //window.location.reload();
+    // const displayScore = () => {
+    //     //alert(`your score is ${score}`)
+    //     console.log("displayScore");
+    //     console.log(score);
+    //     //window.location.reload();
+    //     setSelected(!selected);
+    //     //finalScore=score;
+    // }
+    
+    const redirectToDisplayScore = () => {
+        navigate("/score", {state:{quizScore:score}});
     }
     return (
         <>
+        <Heading/>
         {questions.map((index,key) => (
             <>
             <div className="main">
@@ -85,8 +94,15 @@ const Form = () => {
             </div>
             </>
         ))}
-        <button type="submit" onClick={() => displayScore()}>Submit Quiz</button>
+        <button type="submit" onClick={() =>  {
+            redirectToDisplayScore();
+        }}>
+        Submit Quiz
+        </button>
 
+        <Routes>
+        <Route path="/score" element={<DisplayScore/>}></Route>
+        </Routes>
         </>
     )
 }
